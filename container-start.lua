@@ -1,15 +1,10 @@
 function round(number,decimals)
-    local power = 10^decimals
-    
-    if (number == 0) then return 0
-    else return math.floor((number/1000) * power) / power
-    end
+	local power = 10^decimals
+	return math.floor((number/1000) * power) / power
 end 
 
 function percent(volume, max)
-    if (volume == 0) then return 0
-    else return math.ceil((volume/max)*100)
-    end
+	return math.ceil((volume/max)*100)
 end
 
 function oreStatus(percent, invert)
@@ -53,8 +48,8 @@ function populateVariables()
 end
 
 function updateScreen()
-    if old_containerVolume == containerVolume then return
-    elseif old_storageVolume == storageVolume then return
+    if old_containerVolume == containerVolume and old_storageVolume == storageVolume then
+		return
     end
     
     old_containerVolume = containerVolume
@@ -107,4 +102,3 @@ local itemHTML = ""
 screen.clear()
 populateVariables()
 updateScreen()
-
