@@ -17,19 +17,17 @@ refinerNames = {"L1", "L2", "L3", "L4", "R1", "R2", "R3", "R4"}
 clickableAreas = {}
 
 function startRefiner(refiner)
-    system.print("starting refiner")
     refiner.start()
     updateScreen()
 end
 
 function stopRefiner(refiner)
-    system.print("stopping refiner")
     refiner.softStop()
     updateScreen()
 end
 
 function createButton(x, y, hx, hy, text, color, fun, refiner)
-	button = "<div class='bootstrap' style='background:"..color..";width:5vw;height:4.5vh;overflow:hidden;font-size:2vh; position:fixed; left: "..(x*100).."vw; top:"..(y*100).."vh;'>" .. text .. "</div>"
+	button = "<div class='bootstrap' style='background:"..color..";width:"..(hx*100).."vw;height:"..(hy*100).."vh;overflow:hidden;padding-top:"..(((hy*100)/2)-1.2).."vh;font-size:2vh; position:fixed; left: "..(x*100).."vw; top:"..(y*100).."vh;'>" .. text .. "</div>"
 	id = screen.addContent(x * 100,y * 100, button)
 
 	local area = {id = id, x = x, y = y, hx = hx, hy = hy, fun = fun, refiner = refiner }
@@ -56,8 +54,8 @@ function updateScreen()
 		local schematicInfo = json.decode(core.getSchematicInfo(schematicId))
 		local schematicName = schematicInfo["ingredients"][1]["name"]
         
-		local stopButton = createButton(0.81, buttonTop, 0.048, 0.042, "stop", "red", stopRefiner, refiner)
-		local startButton = createButton(0.9, buttonTop, 0.048, 0.042, "start", "green", startRefiner, refiner)
+		local stopButton = createButton(0.81, buttonTop, 0.05, 0.045, "stop", "red", stopRefiner, refiner)
+		local startButton = createButton(0.9, buttonTop, 0.05, 0.045, "start", "green", startRefiner, refiner)
         
 		buttonTop = buttonTop + 0.062
 
@@ -71,7 +69,7 @@ function updateScreen()
 end
 
 	html = [[
-<div class="bootstrap">
+<div class="bootstrap">]] .. createButton(0.8, 0.1, 0.1, 0.06, "refresh", "blue", updateScreen, false)..[[
 <h1 style="font-size: 4em;">Refiner Status</h1>
 <table 
 style="
@@ -103,4 +101,3 @@ end
 
 screen.clear()
 updateScreen()
-
