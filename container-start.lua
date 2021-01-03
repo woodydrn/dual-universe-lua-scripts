@@ -21,6 +21,23 @@ function oreStatus(percent, invert)
 	end
 end
 
+function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+function isNotEmpty(s)
+	return s ~= nil and s ~= ''
+end
+
 maxContainer = 0
 containerVolume = 0
 storageVolume = 0
@@ -37,8 +54,16 @@ old_storageVolume = -1
 function populateVariables()
 	maxContainer = 307.20
     
-	containerVolume = round(math.ceil(container.getItemsVolume()),1)
-	storageVolume = round(math.ceil(storage.getItemsVolume()),1)
+	local cv = container.getItemsVolume()
+    
+	if isNotEmpty(cv) then containerVolume = round(math.ceil(cv),1)
+     else containerVolume = 0
+     end
+
+	local sv = storage.getItemsVolume()
+	if isNotEmpty(sv) then storageVolume = round(math.ceil(sv),1)
+     else storageVolume = 0
+     end
     
      containerPercent = percent(containerVolume, maxContainer)
 	containerStatus = oreStatus(containerPercent, 0)
@@ -48,14 +73,21 @@ function populateVariables()
 end
 
 function updateScreen()
-    if old_containerVolume == containerVolume and old_storageVolume == storageVolume then
+	if old_containerVolume == containerVolume and old_storageVolume == storageVolume then
 		return
-    end
+	end
+
+	if old_containerVolume ~= containerVolume then
+		old_containerVolume = containerVolume
+		container.acquireStorage()
+     end
     
-    old_containerVolume = containerVolume
-    old_storageVolume = storageVolume
+	if old_storageVolume ~= storageVolume then
+		old_storageVolume = storageVolume
+		storage.acquireStorage()
+     end
     
-    html = [[
+	html = [[
 <div class="bootstrap">
 <h1 style="font-size: 4em;">Container Status</h1>
 <table 
@@ -77,16 +109,17 @@ style="
 		<th>Volume</th>
 		<th>Percent</th>
 		<th>Status</th>
+	</tr>
 	<tr>
-		<th>Container</th>
-		<th>]]..containerVolume..[[KL</th>
-		<th>]]..containerPercent..[[%</th>
+		<td>Container</td>
+		<td>]]..containerVolume..[[KL</td>
+		<td>]]..containerPercent..[[%</td>
 		]]..containerStatus..[[
 	</tr>
 	<tr>
-		<th>Storage</th>
-		<th>]]..storageVolume..[[KL</th>
-		<th>]]..storagePercent..[[%</th>
+		<td>Storage</th>
+		<td>]]..storageVolume..[[KL</td>
+		<td>]]..storagePercent..[[%</td>
 		]]..storageStatus..[[
 	</tr>
 </table>
@@ -95,9 +128,6 @@ style="
     
 	screen.setHTML(html)
 end
-
-local itemList = container.getItemsList()
-local itemHTML = ""
 
 screen.clear()
 populateVariables()
