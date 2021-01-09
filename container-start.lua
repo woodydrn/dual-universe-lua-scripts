@@ -38,6 +38,8 @@ function isNotEmpty(s)
 	return s ~= nil and s ~= ''
 end
 
+startTime = math.ceil(system.getTime())
+
 maxContainer = 0
 containerVolume = 0
 storageVolume = 0
@@ -50,6 +52,9 @@ storageStatus = ""
 
 old_containerVolume = -1
 old_storageVolume = -1
+
+shouldUpdateContainer = true
+shouldUpdateStorage = true
 
 function populateVariables()
 	maxContainer = 307.20
@@ -79,12 +84,12 @@ function updateScreen()
 
 	if old_containerVolume ~= containerVolume then
 		old_containerVolume = containerVolume
-		container.acquireStorage()
+		shouldUpdateContainer = true
      end
     
 	if old_storageVolume ~= storageVolume then
 		old_storageVolume = storageVolume
-		storage.acquireStorage()
+		shouldUpdateStorage = true
      end
     
 	html = [[
