@@ -10,13 +10,13 @@ end
 function oreStatus(percent, invert)
 	if invert == 0 then
 		if percent <= 25 then return "<th style=\"color: red;\">LOW</th>"
-		elseif percent > 25 and percent < 50 then return "<th style=\"color: orange;\">LOW</th>"
+		elseif percent > 25 and percent <= 50 then return "<th style=\"color: orange;\">OK</th>"
 		else return "<th style=\"color: green;\">GOOD</th>"
 		end 
 	else
-		if percent <= 25 then return "<th style=\"color: green;\">GOOD</th>"
-		elseif percent > 25 and percent < 75 then return "<th style=\"color: orange;\">OK</th>"
-		else return "<th style=\"color: red;\">HIGH</th>"
+		if percent <= 50 then return "<th style=\"color: green;\">GOOD</th>"
+		elseif percent > 50 and percent <= 75 then return "<th style=\"color: orange;\">OK</th>"
+		else return "<th style=\"color: red;\">Almost at max</th>"
 		end 
 	end
 end
@@ -40,7 +40,8 @@ end
 
 startTime = math.ceil(system.getTime())
 
-maxContainer = 0
+maxContainer = 1241.60
+maxStorage = 614.40
 containerVolume = 0
 storageVolume = 0
 
@@ -53,12 +54,13 @@ storageStatus = ""
 old_containerVolume = -1
 old_storageVolume = -1
 
-shouldUpdateContainer = true
-shouldUpdateStorage = true
+shouldUpdateContainer = false
+shouldUpdateStorage = false
+
+container.acquireStorage()
+storage.acquireStorage()
 
 function populateVariables()
-	maxContainer = 307.20
-    
 	local cv = container.getItemsVolume()
     
 	if isNotEmpty(cv) then containerVolume = round(math.ceil(cv),1)
@@ -73,7 +75,7 @@ function populateVariables()
      containerPercent = percent(containerVolume, maxContainer)
 	containerStatus = oreStatus(containerPercent, 0)
 
-	storagePercent = percent(storageVolume, maxContainer)
+	storagePercent = percent(storageVolume, maxStorage)
 	storageStatus = oreStatus(storagePercent, 1)
 end
 
