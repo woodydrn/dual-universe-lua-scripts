@@ -24,6 +24,7 @@ schematics = {
     chromite = 67742786;
     natron = 1843262763;
     hematite = 1833008839;
+    coal = 1262929839;
     
 }
 changeButtons = {}
@@ -38,12 +39,12 @@ end
 
 function startRefiner(refiner)
 	refiner.start()
-	updateIn(1)
+	updateIn(0.5)
 end
 
 function stopRefiner(refiner)
 	refiner.softStop()
-	updateIn(1)
+	updateIn(0.5)
 end
 
 function showSchematics(refiner)
@@ -54,7 +55,7 @@ function showSchematics(refiner)
 
 	for schematicName, schematicId in pairs(schematics) do
 		local parameter = { refiner = refiner, schematic = schematicId }
-		local changeButton = createButton(buttonLeft, buttonTop, 0.20, 0.07, schematicName, "green", 3, changeSchematic, parameter)
+		createButton(buttonLeft, buttonTop, 0.20, 0.07, schematicName, "green", 3, changeSchematic, parameter)
 
 		counter = counter + 1
 		buttonLeft = buttonLeft + 0.22
@@ -75,7 +76,7 @@ function changeSchematic(parameters)
 		screen.deleteContent(id)
      end
     
-	updateIn(1)
+	updateIn(0.5)
 end
 
 function createButton(x, y, hx, hy, text, color, fontsize, fun, parameter)
